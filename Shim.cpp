@@ -87,10 +87,10 @@ int Create(int argc, char *argv[], LPWSTR self) {
         return EXIT_FAILURE;
     }
 
-    // Write exe and wd to out:Shim:$DATA.
-    LPWSTR sout = new WCHAR[lenWout + 11];  // +11 for :Shim:$DATA.
+    // Write exe and wd to out:Shim.
+    LPWSTR sout = new WCHAR[lenWout + 5];  // +5 for :Shim.
     wcscpy_s(sout, lenWout, wout);
-    wcscpy_s(sout + lenWout - 1, 12, L":Shim:$DATA");
+    wcscpy_s(sout + lenWout - 1, 6, L":Shim");
 
     HANDLE hFile = CreateFileW(sout, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
     if (hFile == INVALID_HANDLE_VALUE) {
@@ -123,18 +123,18 @@ int Create(int argc, char *argv[], LPWSTR self) {
 
 int Shim(HANDLE hFile, char *argv[]) {
     /**
-     * Run as a shim. Read from :Shim:$DATA stream and launch shimmed application.
+     * Run as a shim. Read from :Shim stream and launch shimmed application.
      *
      * @param HANDLE Open handle to self.
      * @param char*[] Command line arguments.
      *
      * @return Exit status.
      */
-    // Read data from :Shim:$DATA stream.
+    // Read data from :Shim stream.
     char *buffer = new char[PATH_LENGTH * 2 + 1 + 1];  // PATH_LENGTH * 2 for exe and wd, 1 for '|', 1 for '\0'.
     DWORD bytes = 0;
     if (!ReadFile(hFile, buffer, PATH_LENGTH * 2 + 1, &bytes, NULL)) {
-        fprintf(stderr, "Failed to read self:Shim:$DATA.\n");
+        fprintf(stderr, "Failed to read self:Shim.\n");
         return EXIT_FAILURE;
     }
     buffer[bytes] = '\0';
@@ -227,16 +227,16 @@ int main(int argc, char *argv[]) {
      */
     // Get path to self.
     LPWSTR file = new WCHAR[PATH_LENGTH];
-    DWORD length = GetModuleFileNameW(NULL, file, PATH_LENGTH - 11);  // -11 to account for ":Shim:$DATA"
-    if (length == 0 || length == PATH_LENGTH - 11) {
+    DWORD length = GetModuleFileNameW(NULL, file, PATH_LENGTH - 5);  // -5 to account for ":Shim"
+    if (length == 0 || length == PATH_LENGTH - 5) {
         fprintf(stderr, "Failed to get path to self.\n");
         return EXIT_FAILURE;
     }
-    // Add :Shim:$DATA to file path.
-    wcscpy(file + length, L":Shim:$DATA");
-    file[length + 11] = '\0';
+    // Add :Shim to file path.
+    wcscpy(file + length, L":Shim");
+    file[length + 5] = '\0';
 
-    // Check if :Shim:$DATA stream is present and switch behaviour accordingly.
+    // Check if :Shim stream is present and switch behaviour accordingly.
     HANDLE hFile = CreateFileW(file, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     int exit_code;
     if (hFile == INVALID_HANDLE_VALUE) {
