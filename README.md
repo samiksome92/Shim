@@ -14,4 +14,4 @@ Compile with `cl` as follows.
       --dir, -d <dir>      Working directory
       --out, -o <out>      Output path
 
-If `--dir` if not specified, the working directory will be wherever the shim is called. If `--out` is not specified the application tries to extract the executable name from path.
+If `--dir` is not specified, the working directory will be wherever the shim is called. If `--out` is not specified the application tries to extract the executable name from path.
