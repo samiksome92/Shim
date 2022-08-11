@@ -16,10 +16,10 @@ void PrintHelp() {
      * Print help and exit.
      */
     printf("Creates a shim to an executable.\n\n");
-    printf("Shim /E<path> [/D<dir>] [/O<out>]\n\n");
-    printf("  /E<path>    Path to executable\n");
-    printf("  /D<dir>     Working directory\n");
-    printf("  /O<out>     Output path\n\n");
+    printf("Usage: Shim.exe [PATH] [OPTIONS...]\n\n");
+    printf("Options:\n");
+    printf("  --dir, -d <dir>      Working directory\n");
+    printf("  --out, -o <out>      Output path\n\n");
 
     exit(EXIT_SUCCESS);
 }
@@ -39,14 +39,18 @@ int Create(int argc, char *argv[], LPWSTR self) {
     char *wd = nullptr;
     char *out = nullptr;
     for (int i = 1; i < argc; i++) {
-        if (strncmp(argv[i], "/?", 2) == 0) {
+        if (strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-h") == 0) {
             PrintHelp();
-        } else if (strncmp(argv[i], "/E", 2) == 0 || strncmp(argv[i], "/e", 2) == 0) {
-            exe = argv[i] + 2;
-        } else if (strncmp(argv[i], "/D", 2) == 0 || strncmp(argv[i], "/d", 2) == 0) {
-            wd = argv[i] + 2;
-        } else if (strncmp(argv[i], "/O", 2) == 0 || strncmp(argv[i], "/o", 2) == 0) {
-            out = argv[i] + 2;
+        } else if (strcmp(argv[i], "--dir") == 0 || strcmp(argv[i], "-d") == 0) {
+            i++;
+            if (i >= argc) break;
+            wd = argv[i];
+        } else if (strcmp(argv[i], "--out") == 0 || strcmp(argv[i], "-o") == 0) {
+            i++;
+            if (i >= argc) break;
+            out = argv[i];
+        } else {
+            exe = argv[i];
         }
     }
 

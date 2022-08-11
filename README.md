@@ -8,10 +8,10 @@ Compile with `cl` as follows.
     cl /O2 /FoShim.obj /FeShim.exe Shim.cpp
 
 ## Usage
-    Shim /E<path> [/D<dir>] [/O<out>]
+    Shim.exe [PATH] [OPTIONS...]
 
-    /E<path>    Path to executable
-    /D<dir>     Working directory
-    /O<out>     Output path
+    Options:
+      --dir, -d <dir>      Working directory
+      --out, -o <out>      Output path
 
-If `/D` if not specified, the working directory will be wherever the shim is called. If `/O` is not specified the application tries to extract the executable name from path.
+If `--dir` if not specified, the working directory will be wherever the shim is called. If `--out` is not specified the application tries to extract the executable name from path.
