@@ -104,10 +104,10 @@ int Create(int argc, char *argv[], LPWSTR self) {
 
     size_t lenExe = strlen(exe);
     size_t lenWd = wd == nullptr ? 0 : strlen(wd);
-    char *buffer = new char[lenExe + lenWd + 1 + 1];  // +1 for '|', +1 for '\0'.
+    char *buffer = new char[lenExe + lenWd + 1 + 1];  // +1 for '\n', +1 for '\0'.
     strcpy_s(buffer, lenExe + 1, exe);
     if (wd != nullptr) {
-        buffer[lenExe] = '|';
+        buffer[lenExe] = '\n';
         strcpy_s(buffer + lenExe + 1, lenWd + 1, wd);
     }
     DWORD bytes = 0;
@@ -135,7 +135,7 @@ int Shim(HANDLE hFile, char *argv[]) {
      * @return Exit status.
      */
     // Read data from :Shim stream.
-    char *buffer = new char[PATH_LENGTH * 2 + 1 + 1];  // PATH_LENGTH * 2 for exe and wd, 1 for '|', 1 for '\0'.
+    char *buffer = new char[PATH_LENGTH * 2 + 1 + 1];  // PATH_LENGTH * 2 for exe and wd, 1 for '\n', 1 for '\0'.
     DWORD bytes = 0;
     if (!ReadFile(hFile, buffer, PATH_LENGTH * 2 + 1, &bytes, NULL)) {
         fprintf(stderr, "Failed to read self:Shim.\n");
@@ -145,7 +145,7 @@ int Shim(HANDLE hFile, char *argv[]) {
 
     // Get exe and wd.
     char *exe = buffer;
-    char *wd = strchr(buffer, '|');
+    char *wd = strchr(buffer, '\n');
     if (wd != nullptr) {
         wd[0] = '\0';
         wd = wd + 1;
